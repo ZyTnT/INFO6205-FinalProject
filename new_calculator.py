@@ -5,9 +5,31 @@ import math
 from pandas import DataFrame as df
 
 
-def multiple_factor_calculator(N,E_0,I_0,beta1,beta2,sigma,gamma,r,T,k):
+def multiple_factor_calculator(N,S_0, E_0,I_0,recovery,confirmTime, latentTime,r,T, methods:list):
+
+    beta1 = 0.78735
+    beta2 = 0.15747
+    sigma = 1/latentTime
+    gamma = 1/(confirmTime-latentTime)
+    R_0 = recovery
+    if methods is not None:
+        for method in methods:
+            if method == '30%vaccine':
+                S_0 = 0.7*S_0
+            elif method == '50%vaccine':
+                S_0 = 0.5*S_0
+            elif method == '70%vaccine':
+                S_0 = 0.3*S_0
+            if method == 'home':
+                r = 1
+            if method == 'mask':
+                beta1 = 0.6*beta1
+                beta2 = 0.6*beta2
+
     INI = [S_0, E_0, I_0, R_0]
     T_range = np.arange(0, T + 1)
+
+
 
     def SEIR(inivalue, _):
         X = inivalue
@@ -17,18 +39,18 @@ def multiple_factor_calculator(N,E_0,I_0,beta1,beta2,sigma,gamma,r,T,k):
         # E数量
         Y[1] = (r * beta1 * X[0] * X[2]) / N + (r * beta2 * X[0] * X[1]) / N - sigma * X[1]
         # I数量
-        Y[2] = sigma * X[1] - gamma * X[2] + k * X[3]
+        Y[2] = sigma * X[1] - gamma * X[2]
         # R数量
-        Y[3] = gamma * X[2] - k * X[2]
+        Y[3] = gamma * X[2]
         return Y
 
     def R0Func(confirm, suspect, t):
         # confirm是确诊人数；susp是疑似人数；t是疾病已爆发时间
 
         # Tg：从感染到发病
-        Tg = 7.5
+        Tg = confirmTime
         # Tl:潜伏期，从感染到开始传播
-        Tl = 3
+        Tl = latentTime
         # Ti:传播期
         Ti = Tg - Tl
 
@@ -55,10 +77,12 @@ def multiple_factor_calculator(N,E_0,I_0,beta1,beta2,sigma,gamma,r,T,k):
         R = R0Func(I_t2[i], S_t2[i], i)
         reproductionList.append(R)
 
-    return S_t2, E_t2, I_t2, R_t2, reproductionList
+    return S_t2, E_t2, I_t2, R_t2
 
 
-def R0_calculator(N, E_0, I_0, R0):
+def R0_calculator(N, S_0, E_0, I_0, recovery, R0, T):
+    R_0 = recovery
+
     def SEIR(inivalue, _):
         Y = np.zeros(4)
         X = inivalue
@@ -72,8 +96,6 @@ def R0_calculator(N, E_0, I_0, R0):
         Y[3] = gamma * X[2]
         return Y
 
-    # T为传播时间
-    T = 300
     T_range = np.arange(0, T + 1)
     # R0 is basic reproduction number
 
