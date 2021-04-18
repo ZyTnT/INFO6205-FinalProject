@@ -1,12 +1,11 @@
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-import new_calculator as calculator
+from main import calculator as calculator
 from dash.dependencies import Input, Output
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(__name__, external_stylesheets = external_stylesheets)
-
 app.layout = html.Div([
     dcc.Graph(id= 'graph-with-slider'),
     dcc.Slider(
@@ -17,16 +16,20 @@ app.layout = html.Div([
         value = 5,
         step =None
     ),
-
     html.Div(className='markDown',
              children=[
                  dcc.Markdown('''
-                This is the SEIR graph based on R and K.
-                
-                Total population is 100000.
-                
-                Initial Suspectible is 100000, Initial Exposed is 0, Initial Infectious is 1, Initial Recovery is 0.
-                ''')]),
+        ## Some R0 of other infectious diseases.
+        
+        Measles:12-18;  Diphtheria: 6-7
+        
+        Smallpox: 5-7;  AIDS: 2-7
+        
+        SARS: 1-3;  The influenza of 1918: 2-3
+        
+        Ebola:1.5-2.5;  2019-nCoV-SARS: 1.4-7(not clear now)
+
+        ''')]),
 
     html.Div(className='multiple-factors',
              children=[
@@ -50,7 +53,8 @@ app.layout = html.Div([
                               {'label':'50% vaccine','value':'50%vaccine'},
                               {'label':'70% vaccine','value':'70%vaccine'},
                               {'label':'Stay at home','value':'home'},
-                              {'label':'Mask everyone','value':'mask'}],
+                              {'label':'Mask everyone','value':'mask'},
+                              {'label':'testing & tracing','value':'testing'}],
                      multi=True, placeholder='Choose government methods'
                  )
              ])
@@ -61,7 +65,7 @@ app.layout = html.Div([
     Output('graph-with-slider','figure'),
     [Input('R0-slider','value')]
 )
-def draw_R0(R0):
+def draw_SEIR_R0(R0):
     S_t, E_t,I_t,R_t = calculator.R0_calculator(100000,100000,0,1,0,R0,100)
     dayList =[]
     for i in range(len(S_t)):
@@ -74,7 +78,7 @@ def draw_R0(R0):
             {'x': dayList, 'y': R_t, 'type': 'bar', 'name': 'Recovery'},
         ],
         'layout' :{
-            'title':'数据展示'
+            'title':'Graph based R and K(S0=100000, E0=0, I0=1, R0=0, K=1.5)'
         }
     }
 
@@ -83,11 +87,11 @@ def draw_R0(R0):
 @app.callback(
     Output('graph-multiple-factors', 'figure'),
     [Input("N_Input","value"),Input('S_0_Input','value'),Input('E_0_Input','value'),Input('I_0_Input','value'),Input('recovery_Input','value'),Input('confirmTime_Input','value'),
-     Input('latentTime_Input','value'),Input('meetNumber_Input','value'),Input('totalDays_Input','value'),Input('methods_Dropdown','value')]
+     Input('latentTime_Input','value'),Input('meetNumber_Input','value'),Input('totalDays_Input','value'),Input('afterDays_Input','value'),Input('methods_Dropdown','value')]
 )
-def draw_mutipleFactors(N, S_0, E_0,I_0,recovery,confirmTime,latentTime,r,T,methods):
+def draw_SEIR_mutipleFactors(N, S_0, E_0,I_0,recovery,confirmTime,latentTime,r,T, afterDays, methods):
 
-    S_t, E_t, I_t, R_t = calculator.multiple_factor_calculator(N,S_0, E_0,I_0,recovery,confirmTime, latentTime,r,T,methods)
+    S_t, E_t, I_t, R_t, R0List = calculator.multiple_factors_calculator(N,S_0, E_0,I_0,recovery,confirmTime, latentTime,r,T,afterDays,methods)
 
 
     dayList =[]
