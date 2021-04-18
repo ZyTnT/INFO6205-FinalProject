@@ -1,5 +1,5 @@
 import unittest
-from main.calculator import multiple_factor_calculator
+from main.calculator import multiple_factors_calculator
 import configparser
 import os
 import matplotlib.pyplot as plt
@@ -24,10 +24,10 @@ class TestMultipleFactors_calculator(unittest.TestCase):
     methods = eval(conf['mutiple_factors']['methods'])
 
     def testMultipleFactorsCalculator_notNone(self):
-        self.assertIsNotNone(multiple_factor_calculator(self.N, self.S_0, self.E_0, self.I_0, self.recovery, self.confirmTime, self.latentTime, self.r, self.T, self.afterDays, self.methods))
+        self.assertIsNotNone(multiple_factors_calculator(self.N, self.S_0, self.E_0, self.I_0, self.recovery, self.confirmTime, self.latentTime, self.r, self.T, self.afterDays, self.methods))
 
     def test_multipleFactorsCaculator_byGraph(self):
-        S_t, E_t, I_t, R_t, reproductionList = multiple_factor_calculator(self.N, self.S_0, self.E_0, self.I_0, self.recovery, self.confirmTime, self.latentTime, self.r, self.T, self.afterDays, self.methods)
+        S_t, E_t, I_t, R_t, reproductionList = multiple_factors_calculator(self.N, self.S_0, self.E_0, self.I_0, self.recovery, self.confirmTime, self.latentTime, self.r, self.T, self.afterDays, self.methods)
         plt.plot(S_t, color='blue', label='Susceptibles')  # , marker='.')
         plt.plot(E_t, color='grey', label='Exposed')
         plt.plot(I_t, color='red', label='Infected')

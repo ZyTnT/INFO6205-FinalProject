@@ -17,7 +17,7 @@ import math
 #   r:The average number of a person meet everyday. (Home quarantine will decrease it)
 #   T: Total days for simulation.
 #   afterDays: Days before government makes policies (Default value is 0 if no input.)
-#   methods: list of government policies(30% vaccine, 50%vaccine, 70%vaccine, home, mask)
+#   methods: list of government policies(30% vaccine, 50%vaccine, 70%vaccine, home, mask, testing & track)
 #############################################################################################
 
 
@@ -97,7 +97,7 @@ def multiple_factors_calculator(N, S_0, E_0, I_0, recovery, confirmTime, latentT
                 confirmTime = 0.7*confirmTime
                 gamma = 1 / (confirmTime - latentTime)
             if method == 'home':
-                r = 2
+                r = 5
             if method == 'mask':
                 beta1 = 0.6 * beta1
                 beta2 = 0.6 * beta2

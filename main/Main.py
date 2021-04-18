@@ -19,7 +19,7 @@ app.layout = html.Div([
     html.Div(className='markDown',
              children=[
                  dcc.Markdown('''
-        ## Some R0 of other infectious diseases.
+        ## Some R of other infectious diseases.
         
         Measles:12-18;  Diphtheria: 6-7
         
@@ -78,7 +78,7 @@ def draw_SEIR_R0(R0):
             {'x': dayList, 'y': R_t, 'type': 'bar', 'name': 'Recovery'},
         ],
         'layout' :{
-            'title':'Graph based R and K(S0=100000, E0=0, I0=1, R0=0, K=1.5)'
+            'title':'Graph based R and K(S0=100000, E0=0, I0=1, R0=0, K=0.1)'
         }
     }
 
